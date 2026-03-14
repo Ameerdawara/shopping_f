@@ -164,12 +164,12 @@ document.addEventListener("DOMContentLoaded", () => {
             .finally(() => {
                 localStorage.clear(); 
                 sessionStorage.clear();
-                window.location.replace("/Auth/Log_in.html"); 
+                window.location.replace("index.html"); 
             })
             .catch(err => {
                 console.error("Logout Error", err);
                 localStorage.clear();
-                window.location.href = "/Auth/Log_in.html";
+                window.location.href = "index.html";
             });
         });
     }
