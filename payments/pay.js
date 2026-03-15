@@ -82,7 +82,6 @@ const headers = {
 submitButton.addEventListener("click", createOrder);
 
 async function createOrder() {
-
     const address = localStorage.getItem("checkout_address");
     const selectedPayment = document.querySelector('input[name="payment"]:checked');
 
@@ -91,32 +90,42 @@ async function createOrder() {
         return;
     }
 
-    // فقط في حال الدفع كاش
-    if (selectedPayment.value !== "cash") {
-        alert("يرجى إتمام الدفع الإلكتروني أولاً");
-        return;
-    }
-
     try {
+        // 1. جلب السلة أولاً للتأكد من وجود منتجات
+        const cartRes = await fetch(`${API_URL}/cart`, { method: "GET", headers });
+        const cartData = await cartRes.json();
+
+        if (!cartData.cart_item || cartData.cart_item.length === 0) {
+            alert("السلة فارغة!");
+            return;
+        }
+
+        // 2. إرسال الطلب مع تفاصيل المنتجات والسعر الإجمالي
         const res = await fetch(`${API_URL}/orders`, {
             method: "POST",
             headers,
             body: JSON.stringify({
                 shipping_address: address,
-                is_paid: false
+                is_paid: selectedPayment.value !== "cash", // true إذا كان دفع إلكتروني
+                payment_method: selectedPayment.value,
+                total_price: cartData.total_price, // إرسال السعر الإجمالي
+                items: cartData.cart_item         // إرسال المنتجات
             })
         });
 
-        if (!res.ok) throw new Error("فشل إنشاء الطلب");
+        if (!res.ok) {
+            const errorMsg = await res.json();
+            console.error("فشل السيرفر:", errorMsg);
+            throw new Error();
+        }
 
         alert("تم إنشاء الطلب بنجاح");
-
         localStorage.removeItem("checkout_address");
         window.location.href = "/Home/client_dashboard.html";
 
     } catch (error) {
         console.error(error);
-        alert("حدث خطأ");
+        alert("حدث خطأ، تأكد من أن جميع بيانات المنتج مكتملة في الباك إند");
     }
 }
 loadQRImages();
