@@ -30,11 +30,11 @@ paymentOptions.forEach(option => {
 
             if (this.value === "shamcash") {
                 // نستخدم الرابط الكامل للسيرفر قبل مسار الصورة
-                qrImage.src = "https://shopping-production-48b2.up.railway.app/api" + qrImages.shamcash_qr;
+                qrImage.src = "https://shopping-production-48b2.up.railway.app" + qrImages.shamcash_qr;
             }
 
             if (this.value === "usdt") {
-                qrImage.src = "https://shopping-production-48b2.up.railway.app/api" + qrImages.usdt_qr;
+                qrImage.src = "https://shopping-production-48b2.up.railway.app" + qrImages.usdt_qr;
             }
         }
     });
