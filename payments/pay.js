@@ -27,16 +27,13 @@ paymentOptions.forEach(option => {
             submitButton.classList.add("hidden");
             qrModal.style.display = "flex";
 
-            // الحل هنا: التأكد من دمج الرابط بشكل صحيح
-            const baseURL = "https://shopping-production-48b2.up.railway.app";
-            
+            // الحل الصحيح: لا تضف رابط السيرفر يدوياً لأن qrImages تحتوي عليه بالفعل
             if (this.value === "shamcash") {
-                // نستخدم `${}` لضمان دمج سليم
-                qrImage.src = `${baseURL}${qrImages.shamcash_qr}`;
+                qrImage.src = qrImages.shamcash_qr; // الرابط كامل جاهز
             }
 
             if (this.value === "usdt") {
-                qrImage.src = `${baseURL}${qrImages.usdt_qr}`;
+                qrImage.src = qrImages.usdt_qr; // الرابط كامل جاهز
             }
         }
     });
