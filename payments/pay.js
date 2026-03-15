@@ -20,7 +20,6 @@ async function loadQRImages() {
 }
 paymentOptions.forEach(option => {
     option.addEventListener("change", function () {
-
         if (this.value === "cash") {
             submitButton.classList.remove("hidden");
             qrModal.style.display = "none";
@@ -28,13 +27,16 @@ paymentOptions.forEach(option => {
             submitButton.classList.add("hidden");
             qrModal.style.display = "flex";
 
+            // الحل هنا: التأكد من دمج الرابط بشكل صحيح
+            const baseURL = "https://shopping-production-48b2.up.railway.app";
+            
             if (this.value === "shamcash") {
-                // نستخدم الرابط الكامل للسيرفر قبل مسار الصورة
-                qrImage.src = "https://shopping-production-48b2.up.railway.app" + qrImages.shamcash_qr;
+                // نستخدم `${}` لضمان دمج سليم
+                qrImage.src = `${baseURL}${qrImages.shamcash_qr}`;
             }
 
             if (this.value === "usdt") {
-                qrImage.src = "https://shopping-production-48b2.up.railway.app" + qrImages.usdt_qr;
+                qrImage.src = `${baseURL}${qrImages.usdt_qr}`;
             }
         }
     });
