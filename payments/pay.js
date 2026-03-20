@@ -1,11 +1,3 @@
-
-const API_URL = "https://shopping-production-48b2.up.railway.app/api";
-const token = localStorage.getItem("token");
-const headers = {
-    "Content-Type": "application/json",
-    "Authorization": `Bearer ${token}`
-};
-
 const paymentOptions = document.querySelectorAll('input[name="payment"]');
 const submitButton = document.getElementById("submitOrder");
 const qrModal = document.getElementById("qrModal");
@@ -13,17 +5,19 @@ const qrImage = document.getElementById("qrImage");
 const closeModal = document.getElementById("closeModal");
 const doneButton = document.getElementById("donePayment");
 let qrImages = {};
-
 async function loadQRImages() {
     try {
-        const res = await fetch(`${API_URL}/api/qr-images`);
+        const res = await fetch("https://shopping-production-48b2.up.railway.app/api/qr-images");
         const data = await res.json();
+
         qrImages = data;
+
+        console.log("QR Loaded:", qrImages);
+
     } catch (error) {
         console.error("فشل تحميل صور QR", error);
     }
 }
-
 paymentOptions.forEach(option => {
     option.addEventListener("change", function () {
         if (this.value === "cash") {
@@ -32,8 +26,14 @@ paymentOptions.forEach(option => {
         } else {
             submitButton.classList.add("hidden");
             qrModal.style.display = "flex";
-            if (this.value === "shamcash") qrImage.src = qrImages.shamcash_qr;
-            if (this.value === "usdt") qrImage.src = qrImages.usdt_qr;
+
+            if (this.value === "shamcash") {
+                qrImage.src = qrImages.shamcash_qr; 
+            }
+
+            if (this.value === "usdt") {
+                qrImage.src = qrImages.usdt_qr; 
+            }
         }
     });
 });
@@ -41,15 +41,9 @@ paymentOptions.forEach(option => {
 closeModal.addEventListener("click", function () {
     qrModal.style.display = "none";
 });
-
 doneButton.addEventListener("click", async function () {
-    const address = localStorage.getItem("checkout_address");
 
-    if (!address || !address.trim()) {
-        alert("لم يتم العثور على العنوان");
-        window.location.href = "/Cart/cart.html";
-        return;
-    }
+    const address = localStorage.getItem("checkout_address");
 
     try {
         const res = await fetch(`${API_URL}/orders`, {
@@ -57,17 +51,14 @@ doneButton.addEventListener("click", async function () {
             headers,
             body: JSON.stringify({
                 shipping_address: address,
-                is_paid: true
+                is_paid: true   // هنا نجعلها 1
             })
         });
 
-        if (!res.ok) {
-            const err = await res.json();
-            console.error("Server error:", err);
-            throw new Error("فشل إنشاء الطلب");
-        }
+        if (!res.ok) throw new Error("فشل إنشاء الطلب");
 
         alert("تم الدفع وإنشاء الطلب بنجاح");
+
         localStorage.removeItem("checkout_address");
         window.location.href = "/Home/client_dashboard.html";
 
@@ -75,19 +66,23 @@ doneButton.addEventListener("click", async function () {
         console.error(error);
         alert("حدث خطأ أثناء تأكيد الدفع");
     }
+
 });
+
+/////create 
+const API_URL = "https://shopping-production-48b2.up.railway.app/api";
+const token = localStorage.getItem("token");
+
+const headers = {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${token}`
+};
 
 submitButton.addEventListener("click", createOrder);
 
 async function createOrder() {
+
     const address = localStorage.getItem("checkout_address");
-
-    if (!address || !address.trim()) {
-        alert("لم يتم العثور على العنوان، يرجى العودة وإدخاله مجدداً");
-        window.location.href = "/Cart/cart.html";
-        return;
-    }
-
     const selectedPayment = document.querySelector('input[name="payment"]:checked');
 
     if (!selectedPayment) {
@@ -95,6 +90,7 @@ async function createOrder() {
         return;
     }
 
+    // فقط في حال الدفع كاش
     if (selectedPayment.value !== "cash") {
         alert("يرجى إتمام الدفع الإلكتروني أولاً");
         return;
@@ -110,13 +106,10 @@ async function createOrder() {
             })
         });
 
-        if (!res.ok) {
-            const err = await res.json();
-            console.error("Server error:", err);
-            throw new Error("فشل إنشاء الطلب");
-        }
+        if (!res.ok) throw new Error("فشل إنشاء الطلب");
 
         alert("تم إنشاء الطلب بنجاح");
+
         localStorage.removeItem("checkout_address");
         window.location.href = "/Home/client_dashboard.html";
 
@@ -125,5 +118,4 @@ async function createOrder() {
         alert("حدث خطأ");
     }
 }
-
 loadQRImages();
