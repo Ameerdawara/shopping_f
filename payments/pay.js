@@ -1,4 +1,4 @@
-// ✅ 1. عرّف المتغيرات أولاً
+
 const API_URL = "https://shopping-production-48b2.up.railway.app/api";
 const token = localStorage.getItem("token");
 const headers = {
@@ -6,7 +6,6 @@ const headers = {
     "Authorization": `Bearer ${token}`
 };
 
-// ✅ 2. باقي الكود
 const paymentOptions = document.querySelectorAll('input[name="payment"]');
 const submitButton = document.getElementById("submitOrder");
 const qrModal = document.getElementById("qrModal");
@@ -43,7 +42,6 @@ closeModal.addEventListener("click", function () {
     qrModal.style.display = "none";
 });
 
-// ✅ 3. doneButton بعد تعريف API_URL و headers
 doneButton.addEventListener("click", async function () {
     const address = localStorage.getItem("checkout_address");
 
