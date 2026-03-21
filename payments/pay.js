@@ -32,7 +32,7 @@ paymentOptions.forEach(option => {
             }
 
             if (this.value === "usdt") {
-                qrImage.src = qrImages.usdt_qr; //
+                qrImage.src = qrImages.usdt_qr; 
             }
         }
     });
